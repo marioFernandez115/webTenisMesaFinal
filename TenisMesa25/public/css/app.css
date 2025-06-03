@@ -1,0 +1,11 @@
+
+.navbar {
+    background-color: #0078FF !important;
+}
+
+.navbar-nav .nav-link {
+    padding: 15px;
+}
+body {
+    overflow-x: hidden;
+}
