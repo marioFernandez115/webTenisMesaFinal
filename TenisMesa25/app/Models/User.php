@@ -13,9 +13,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
-        'nombre',
-        'apellido_1',
-        'apellido_2',
+        'nombreyapellidos',
         'email',
         'password',
         'telefono',
@@ -37,11 +35,14 @@ class User extends Authenticatable
      * Relación muchos a muchos con Partidos
      */
     public function partidos()
-    {
-        return $this->belongsToMany(Partido::class, 'partido_user', 'user_id', 'partido_id')
-
-                    ->withTimestamps();
-    }
+{
+    return $this->belongsToMany(
+        Partido::class,
+        'partido_user',
+        'usuario_id', // clave foránea de este modelo en la tabla pivote
+        'partido_id'  // clave foránea del otro modelo en la tabla pivote
+    )->withTimestamps();
+}
 
     /**
      * Nombre legible del equipo
@@ -51,9 +52,9 @@ class User extends Authenticatable
         $equipo = (string) $this->equipo;
     
         switch ($equipo) {
-            case '1':
+            case 'Rivas (Parque Sureste)':
                 return 'Rivas (Parque Sureste)';
-            case '2':
+            case 'Rivas Promesas (Colegio Cigüeñas)':
                 return 'Rivas Promesas (Colegio Cigüeñas)';
             default:
                 return 'Sin equipo';

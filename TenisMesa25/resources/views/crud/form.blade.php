@@ -1,16 +1,6 @@
 <div class="mb-3">
-    <label for="nombre" class="form-label">Nombre</label>
-    <input type="text" class="form-control" name="nombre" value="{{ old('nombre', $usuario->nombre ?? '') }}" required>
-</div>
-
-<div class="mb-3">
-    <label for="apellido_1" class="form-label">Primer Apellido</label>
-    <input type="text" class="form-control" name="apellido_1" value="{{ old('apellido_1', $usuario->apellido_1 ?? '') }}" required>
-</div>
-
-<div class="mb-3">
-    <label for="apellido_2" class="form-label">Segundo Apellido</label>
-    <input type="text" class="form-control" name="apellido_2" value="{{ old('apellido_2', $usuario->apellido_2 ?? '') }}" required>
+    <label for="nombreyapellidos" class="form-label">Nombre y Apellidos</label>
+    <input type="text" class="form-control" name="nombreyapellidos" value="{{ old('nombreyapellidos', $usuario->nombreyapellidos ?? '') }}" required>
 </div>
 
 <div class="mb-3">
@@ -39,7 +29,7 @@
     <label for="equipo" class="form-label">Equipo</label>
     <select name="equipo" class="form-select" required>
         <option value="">-- Seleccionar Equipo --</option>
-        <option value="Rivas (Parque Suereste)" {{ old('equipo', $usuario->equipo ?? '') == 'Rivas (Parque Suereste)' ? 'selected' : '' }}>Rivas (Parque Sureste)</option>
+        <option value="Rivas (Parque Sureste)" {{ old('equipo', $usuario->equipo ?? '') == 'Rivas (Parque Sureste)' ? 'selected' : '' }}>Rivas (Parque Sureste)</option>
         <option value="Rivas Promesas (Colegio Cigüeñas)" {{ old('equipo', $usuario->equipo ?? '') == 'Rivas Promesas (Colegio Cigüeñas)' ? 'selected' : '' }}>Rivas Promesas (Colegio Cigüeñas)</option>
     </select>
 </div>

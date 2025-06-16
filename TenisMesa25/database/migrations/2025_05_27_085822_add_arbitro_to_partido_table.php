@@ -7,9 +7,9 @@ class AddArbitroToPartidoTable extends Migration
 {
     public function up()
     {
-        Schema::table('partido', function (Blueprint $table) {
-            $table->string('arbitro')->nullable()->after('equipo'); // puedes cambiar la posición si lo deseas
-        });
+    Schema::table('partido', function (Blueprint $table) {
+    $table->string('arbitro')->nullable()->after('fecha');
+});
     }
 
     public function down()

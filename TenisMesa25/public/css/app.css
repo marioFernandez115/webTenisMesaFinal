@@ -1,11 +1,358 @@
+    .navbar {
+        transition: all 0.4s ease-in-out;
+        background-color: rgba(0, 120, 255, 0.6);
+        box-shadow: none;
+    }
 
-.navbar {
-    background-color: #0078FF !important;
+    .navbar.scrolled {
+        background-color: #0078FF !important;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .navbar .nav-link {
+        transition: color 0.3s ease, background-color 0.3s ease;
+        border-radius: 0.25rem;
+        padding: 0.5rem 1rem;
+        margin: 0 0.3rem;
+        font-weight: 500;
+    }
+
+    .navbar .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: #fff !important;
+    }
+
+    .navbar .nav-link.disabled {
+        opacity: 0.8;
+    }
+
+    .navbar-toggler {
+        border-color: rgba(255, 255, 255, 0.7);
+    }
+
+
+    /* Título con degradado dinámico */
+.gradient-text {
+    background: linear-gradient(90deg, #0078FF, #00C6FF, #0078FF);
+    background-size: 200% auto;
+    color: #fff;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientMove 3s ease infinite;
 }
 
-.navbar-nav .nav-link {
-    padding: 15px;
+/* Stroke para destacar */
+.text-stroke {
+    color: transparent;
+    -webkit-text-stroke: 1.5px #0078FF;
+    text-shadow: 0 0 10px rgba(0, 120, 255, 0.5);
 }
-body {
-    overflow-x: hidden;
+
+/* Entrada potente del título */
+.animate-pop {
+    animation: popIn 0.8s ease-out forwards;
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+/* FadeUp suave para el párrafo */
+.animate-fade-up {
+    animation: fadeUp 1.2s ease-out 0.5s forwards;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+/* Animaciones clave */
+@keyframes popIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% center;
+    }
+    50% {
+        background-position: 100% center;
+    }
+    100% {
+        background-position: 0% center;
+    }
+}
+
+    .gradient-text {
+        background: linear-gradient(90deg, #0078FF, #00C6FF, #0078FF);
+        background-size: 200% auto;
+        color: #fff;
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientMove 3s ease infinite;
+    }
+
+    .text-stroke {
+        color: transparent;
+        -webkit-text-stroke: 1.5px #0078FF;
+        text-shadow: 0 0 10px rgba(0, 120, 255, 0.5);
+    }
+
+    .animate-pop {
+        animation: popIn 0.8s ease-out forwards;
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    .animate-fade-up {
+        animation: fadeUp 1.2s ease-out 0.5s forwards;
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    @keyframes popIn {
+        0% {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes fadeUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes gradientMove {
+        0% {
+            background-position: 0% center;
+        }
+        50% {
+            background-position: 100% center;
+        }
+        100% {
+            background-position: 0% center;
+        }
+    }
+
+     /* Animación fade-in al cargar */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 1s forwards;
+    }
+
+    .fade-in:nth-child(1) {
+        animation-delay: 0.2s;
+    }
+    .fade-in:nth-child(2) {
+        animation-delay: 0.5s;
+    }
+    .fade-in:nth-child(3) {
+        animation-delay: 0.8s;
+    }
+
+    /* Animación para cards que aparecen al hacer scroll */
+    .fade-slide-up {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .fade-slide-up.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Animación botón */
+    .btn-animated {
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-animated:hover, .btn-animated:focus {
+        background-color: #005bbb !important;
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 120, 255, 0.5);
+    }
+
+    /* Video hover */
+    .video-hover {
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+        cursor: pointer;
+    }
+
+    .video-hover:hover {
+        transform: scale(1.03);
+        box-shadow: 0 8px 20px rgba(0, 120, 255, 0.7);
+    }
+
+    /* Keyframes fadeInUp */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .fade-up {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeUp 1s ease-out forwards;
+    }
+
+    .fade-delay-1 { animation-delay: 0.3s; }
+    .fade-delay-2 { animation-delay: 0.6s; }
+    .fade-delay-3 { animation-delay: 0.9s; }
+
+    .gradient-header {
+        background: linear-gradient(90deg, #0078FF, #00C6FF);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientMove 4s ease-in-out infinite;
+        font-weight: bold;
+        text-shadow: 0 0 10px rgba(0,120,255,0.2);
+    }
+
+    @keyframes fadeUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes gradientMove {
+        0% {
+            background-position: 0% center;
+        }
+        50% {
+            background-position: 100% center;
+        }
+        100% {
+            background-position: 0% center;
+        }
+    }
+
+    iframe {
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    }
+
+    .card-style {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        transition: transform 0.3s ease;
+    }
+
+    .card-style:hover {
+        transform: scale(1.02);
+    }
+
+    .fade-up {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeUp 1s ease-out forwards;
+    }
+
+    .fade-delay-1 { animation-delay: 0.3s; }
+    .fade-delay-2 { animation-delay: 0.6s; }
+    .fade-delay-3 { animation-delay: 0.9s; }
+
+    @keyframes fadeUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+.gradient-header {
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    font-weight: bold;
+    font-size: 3.2rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+    @keyframes gradientMove {
+      0% { background-position: 0% center; }
+    50% { background-position: 100% center; }
+    100% { background-position: 0% center; }
+    }
+
+    .imgNosotros {
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        transition: transform 0.4s ease;
+    }
+
+    .imgNosotros:hover {
+        transform: scale(1.03);
+    }
+
+    .section-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+ body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    footer {
+        margin-top: auto;
+        background: #1a1a1a;
+        color: white;
+        transition: background 0.3s ease;
+    }
+
+    footer h5 {
+        border-bottom: 2px solid #0088ff;
+        display: inline-block;
+        padding-bottom: 5px;
+    }
+
+    footer a:hover {
+        color: #0088ff !important;
+    }
+
+    .social-icon {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.5s ease;
+    }
+
+    .social-icon.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .card {
+    border-radius: 16px;
 }

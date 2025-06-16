@@ -20,6 +20,10 @@
             placeholder: "Selecciona una opción",
             width: '100%'
         });
+        $('#arbitro_id').select2({
+        placeholder: "Seleccione un árbitro",
+        width: '100%'
+        });
     });
 </script>
 @endpush

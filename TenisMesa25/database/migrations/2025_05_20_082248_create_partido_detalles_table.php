@@ -16,15 +16,15 @@ class CreatePartidoDetallesTable extends Migration
         Schema::create('partido_detalles', function (Blueprint $table) {
             $table->id();
 
-            // Foreign Keys
+            // Relaciones
             $table->unsignedBigInteger('partido_id');
-            $table->unsignedBigInteger('usuario_local_id')->nullable(); // <- Aquí permitimos null
+            $table->unsignedBigInteger('usuario_local_id')->nullable(); // id del usuario (jugador local)
 
-            // Jugadores
-            $table->string('jugador_local')->nullable();
+            // Datos de jugadores (se guardan los nombres en texto plano también)
+            $table->string('jugador_local')->nullable(); // redundancia opcional
             $table->string('jugador_visitante');
 
-            // Juegos: formato tipo "11-9"
+            // Juegos individuales (hasta 6)
             $table->string('juego_1', 10)->nullable();
             $table->string('juego_2', 10)->nullable();
             $table->string('juego_3', 10)->nullable();
@@ -32,18 +32,18 @@ class CreatePartidoDetallesTable extends Migration
             $table->string('juego_5', 10)->nullable();
             $table->string('juego_6', 10)->nullable();
 
+            // Resultado parcial (opcional: puedes usarlo para mostrar quién ganó el enfrentamiento)
+            $table->string('ganador')->nullable();
+
             $table->timestamps();
 
-            // Relaciones
-            $table->foreign('partido_id')
-                  ->references('id')
-                  ->on('partido')
-                  ->onDelete('cascade');
+            // Foreign keys
+            $table->foreign('partido_id')->references('id')->on('partido')->onDelete('cascade');
+            $table->foreign('usuario_local_id')->references('id')->on('users')->onDelete('cascade');
 
-            $table->foreign('usuario_local_id')
-                  ->references('id')
-                  ->on('users')
-                  ->onDelete('cascade');
+            // Indexes para rendimiento
+            $table->index('partido_id');
+            $table->index('usuario_local_id');
         });
     }
 

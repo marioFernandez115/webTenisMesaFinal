@@ -1,11 +1,8 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Partido;
-use App\Models\User;
 
 class PartidoDetalle extends Model
 {
@@ -24,7 +21,10 @@ class PartidoDetalle extends Model
         'juego_4',
         'juego_5',
         'juego_6',
+        'ganador', // <- si lo usas en tabla
     ];
+
+    protected $with = ['usuarioLocal'];
 
     /**
      * Relación: este detalle pertenece a un partido.
@@ -37,8 +37,11 @@ class PartidoDetalle extends Model
     /**
      * Relación: jugador local (usuario del sistema).
      */
-    public function usuario_local()
-    {
-        return $this->belongsTo(User::class, 'usuario_local_id');
-    }
+// App\Models\PartidoDetalle.php
+// App\Models\PartidoDetalle.php
+public function usuarioLocal()
+{
+    return $this->belongsTo(User::class, 'usuario_local_id');
+}
+
 }

@@ -4,22 +4,24 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePartidoUserTable extends Migration
+class CreateNoticiasTable extends Migration
 {
     /**
      * Run the migrations.
      *
      * @return void
      */
+
     public function up()
     {
-
-         Schema::create('partido_user', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('partido_id')->constrained('partido')->onDelete('cascade');
-        $table->foreignId('usuario_id')->constrained('users')->onDelete('cascade');
+        Schema::create('noticias', function (Blueprint $table) {
+          $table->id();
+        $table->string('titulo');
+        $table->text('descripcion');
+        $table->date('fecha');
+        $table->string('imagen')->nullable(); // Campo para la imagen
         $table->timestamps();
-    });
+        });
     }
 
     /**
@@ -29,6 +31,6 @@ class CreatePartidoUserTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('partido_user');
+        Schema::dropIfExists('noticias');
     }
 }

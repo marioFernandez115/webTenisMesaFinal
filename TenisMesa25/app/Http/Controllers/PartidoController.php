@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Partido;
@@ -13,7 +12,8 @@ class PartidoController extends Controller
 {
     public function index()
     {
-        $partidos = Partido::with('liga', 'jugadores')->latest()->paginate(10);
+        $partidos = Partido::with('liga', 'jugadores')->orderBy('fecha', 'desc')->paginate(10);
+
         return view('partidos.index', [
             'partidos' => $partidos,
             'usuarios' => User::all(),
@@ -41,57 +41,64 @@ class PartidoController extends Controller
             'acta' => $acta
         ]);
     }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
             'nombrePartido' => 'required|string|max:50',
-            'nombre' => 'required|string|max:50',
+            'equipo_local' => 'required|string|max:100',
+            'equipo_visitante' => 'required|string|max:100',
             'jornada' => 'required|integer|min:1|max:22',
             'division' => 'required|string',
-            'equipo' => 'required|integer',
+            'estado' => 'required|in:local,visitante',
             'fecha' => 'required|date',
+            'arbitro' => 'nullable|string|max:255',
             'resultado' => 'required|string|max:255',
-            'jugadores_locales' => 'nullable|array|max:3',
-            'jugadores_locales.*' => 'nullable|exists:users,id',
-            'detalles' => 'nullable|array',
-            'detalles.*.usuario_local_id' => 'nullable|exists:users,id',
+            'detalles' => 'required|array|size:6',
+            'detalles.*.usuario_local_id' => 'required|exists:users,id',
             'detalles.*.jugador_visitante' => 'nullable|string|max:255',
-            'detalles.*.juego_1' => 'nullable|string|max:10',
-            'detalles.*.juego_2' => 'nullable|string|max:10',
-            'detalles.*.juego_3' => 'nullable|string|max:10',
-            'detalles.*.juego_4' => 'nullable|string|max:10',
-            'detalles.*.juego_5' => 'nullable|string|max:10',
-            'detalles.*.juego_6' => 'nullable|string|max:10',
+            'detalles.*.juego_1' => 'nullable|string|max:10|regex:/^\d{1,2}-\d{1,2}$/',
+            'detalles.*.juego_2' => 'nullable|string|max:10|regex:/^\d{1,2}-\d{1,2}$/',
+            'detalles.*.juego_3' => 'nullable|string|max:10|regex:/^\d{1,2}-\d{1,2}$/',
+            'detalles.*.juego_4' => 'nullable|string|max:10|regex:/^\d{1,2}-\d{1,2}$/',
+            'detalles.*.juego_5' => 'nullable|string|max:10|regex:/^\d{1,2}-\d{1,2}$/',
+            'detalles.*.juego_6' => 'nullable|string|max:10|regex:/^\d{1,2}-\d{1,2}$/',
         ]);
+        $nombrePartido = $validated['nombrePartido'];
+
+        $ganador = $validated['estado'] === 'local' ? $validated['equipo_local'] : $validated['equipo_visitante'];
 
         $partido = Partido::create([
             'nombrePartido' => $validated['nombrePartido'],
-            'nombre' => $validated['nombre'],
+            'equipo_local' => $validated['equipo_local'],
+            'equipo_visitante' => $validated['equipo_visitante'],
             'jornada' => $validated['jornada'],
             'division' => $validated['division'],
-            'equipo' => $validated['equipo'],
+            'estado' => $validated['estado'],
             'fecha' => $validated['fecha'],
+            'arbitro' => $validated['arbitro'] ?? null,
             'resultado' => $validated['resultado'],
             'usuario_id' => Auth::id(),
+            'ganador' => $ganador,
             'id_liga' => $request->id_liga ?? null,
             'id_instalacion' => $request->id_instalacion ?? null,
         ]);
 
-        if (!empty($validated['jugadores_locales'])) {
-            $partido->jugadores()->sync(array_filter($validated['jugadores_locales']));
-        }
+        // jugadores (opcional, puedes eliminar si no usas este campo)
+        // if (!empty($validated['usuario_local_id'])) {
+        //     $partido->jugadores()->sync(array_filter($validated['usuario_local_id']));
+        // }
 
+        // detalles
         if (!empty($validated['detalles'])) {
             foreach ($validated['detalles'] as $detalle) {
                 $usuarioLocalId = $detalle['usuario_local_id'] ?? null;
 
-                // Solo crear detalle si hay usuario_local_id válido o jugador visitante no vacío
                 if ((!is_null($usuarioLocalId) && User::find($usuarioLocalId)) || !empty($detalle['jugador_visitante'])) {
-                    if (!is_null($usuarioLocalId) && User::find($usuarioLocalId)) {
-                        $detalle['jugador_local'] = User::find($usuarioLocalId)->name;
+                    if (!is_null($usuarioLocalId)) {
+                        $detalle['jugador_local'] = User::find($usuarioLocalId)->nombreyapellidos;
                         $detalle['usuario_local_id'] = $usuarioLocalId;
                     } else {
-                        // En caso no haya usuario_local_id válido, poner null explícito para evitar error
                         $detalle['usuario_local_id'] = null;
                         $detalle['jugador_local'] = null;
                     }
@@ -103,9 +110,17 @@ class PartidoController extends Controller
 
         return redirect()->route('partidos.index')->with('success', 'Partido creado correctamente.');
     }
+
+    private function obtenerNombreLocal($nombrePartido, $nombreVisitante)
+    {
+        $pattern = '/\s*-\s*' . preg_quote($nombreVisitante, '/') . '/i';
+        $nombreLocal = preg_replace($pattern, '', $nombrePartido);
+        return $nombreLocal ?: 'Equipo Local';
+    }
+
     public function show($id)
     {
-        $partido = Partido::with(['detalles.usuario_local'])->findOrFail($id);
+        $partido = Partido::with(['detalles.usuarioLocal'])->findOrFail($id);
         return view('partidos.show', compact('partido'));
     }
 
@@ -120,21 +135,23 @@ class PartidoController extends Controller
         ]);
     }
 
-     public function update(Request $request, Partido $partido)
+    public function update(Request $request, Partido $partido)
     {
         $validated = $request->validate([
             'nombrePartido' => 'required|string|max:50',
-            'nombre' => 'required|string|max:255',
             'jornada' => 'required|integer|min:1|max:22',
             'fecha' => 'required|date',
             'division' => 'required|string',
-            'equipo' => 'required|integer',
+            'equipo_local' => 'required|string|max:100',
+            'equipo_visitante' => 'required|string|max:100',
+            'estado' => 'required|in:local,visitante',
             'resultado' => 'required|string',
+            'arbitro' => 'nullable|string|max:255',
             'jugadores' => 'nullable|array|max:8',
             'jugadores.*' => 'nullable|exists:users,id',
-            'detalles' => 'nullable|array',
+            'detalles' => 'required|array|size:6',
             'detalles.*.id' => 'nullable|integer|exists:partido_detalles,id',
-            'detalles.*.usuario_local_id' => 'nullable|exists:users,id',
+            'detalles.*.usuario_local_id' => 'required|exists:users,id',
             'detalles.*.jugador_visitante' => 'nullable|string|max:255',
             'detalles.*.juego_1' => 'nullable|string|max:10',
             'detalles.*.juego_2' => 'nullable|string|max:10',
@@ -146,12 +163,14 @@ class PartidoController extends Controller
 
         $partido->update([
             'nombrePartido' => $validated['nombrePartido'],
-            'nombre' => $validated['nombre'],
             'jornada' => $validated['jornada'],
             'division' => $validated['division'],
-            'equipo' => $validated['equipo'],
+            'equipo_local' => $validated['equipo_local'],
+            'equipo_visitante' => $validated['equipo_visitante'],
+            'estado' => $validated['estado'],
             'fecha' => $validated['fecha'],
             'resultado' => $validated['resultado'],
+            'arbitro' => $validated['arbitro'] ?? $partido->arbitro,
             'id_liga' => $request->id_liga ?? $partido->id_liga,
         ]);
 
@@ -159,30 +178,23 @@ class PartidoController extends Controller
             $partido->jugadores()->sync(array_filter($validated['jugadores']));
         }
 
+        // Actualizar detalles del partido
         if (!empty($validated['detalles'])) {
             foreach ($validated['detalles'] as $detalle) {
-                $usuarioLocalId = $detalle['usuario_local_id'] ?? null;
-
                 if (!empty($detalle['id'])) {
-                    $detalleExistente = PartidoDetalle::find($detalle['id']);
+                    $detalleExistente = \App\Models\PartidoDetalle::find($detalle['id']);
                     if ($detalleExistente) {
-                        if (!is_null($usuarioLocalId) && User::find($usuarioLocalId)) {
-                            $detalle['jugador_local'] = User::find($usuarioLocalId)->name;
-                            $detalle['usuario_local_id'] = $usuarioLocalId;
-                            $detalleExistente->update($detalle);
-                        }
-                    }
-                } else {
-                    // Crear nuevo detalle solo si usuario_local_id válido o jugador visitante no vacío
-                    if ((!is_null($usuarioLocalId) && User::find($usuarioLocalId)) || !empty($detalle['jugador_visitante'])) {
-                        if (!is_null($usuarioLocalId) && User::find($usuarioLocalId)) {
-                            $detalle['jugador_local'] = User::find($usuarioLocalId)->name;
-                            $detalle['usuario_local_id'] = $usuarioLocalId;
-                        } else {
-                            $detalle['usuario_local_id'] = null;
-                            $detalle['jugador_local'] = null;
-                        }
-                        $partido->detalles()->create($detalle);
+                        $detalleExistente->update([
+                            'usuario_local_id' => $detalle['usuario_local_id'] ?? null,
+                            'jugador_local' => isset($detalle['usuario_local_id']) && $detalle['usuario_local_id'] ? \App\Models\User::find($detalle['usuario_local_id'])->nombreyapellidos : null,
+                            'jugador_visitante' => $detalle['jugador_visitante'] ?? null,
+                            'juego_1' => $detalle['juego_1'] ?? null,
+                            'juego_2' => $detalle['juego_2'] ?? null,
+                            'juego_3' => $detalle['juego_3'] ?? null,
+                            'juego_4' => $detalle['juego_4'] ?? null,
+                            'juego_5' => $detalle['juego_5'] ?? null,
+                            'juego_6' => $detalle['juego_6'] ?? null,
+                        ]);
                     }
                 }
             }

@@ -1,59 +1,57 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\PartidoDetalle;
-use App\Models\User;
-use App\Models\Liga;
-use App\Models\Instalacion;
 
 class Partido extends Model
 {
     use HasFactory;
 
     protected $table = 'partido';
-protected $fillable = [
-    'usuario_id',
-    'nombrePartido',
-    'nombre',
-    'fecha',
-    'id_liga',
-    'id_instalacion',
-    'jornada',
-    'division',
-    'equipo',
-    'arbitro', // <-- añadido
-    'resultado',
-    'estado',
-    'tipo_partido',
-    'jugadores', // almacenado como JSON
-    'jugadores_locales', // <-- añadido
-    'ganador',
-    'resultado_general',
-];
 
-protected $casts = [
-    'jugadores' => 'array',
-    'jugadores_locales' => 'array', // <-- añadido para que se transforme automáticamente
-    'fecha' => 'datetime',
-];
+    protected $fillable = [
+        'usuario_id',
+        'nombrePartido',
+        'nombre',
+        'fecha',
+        'jornada',
+        'division',
+        'equipo',
+        'equipo_local',
+        'equipo_visitante',
+        'arbitro',
+        'resultado',
+        'estado',
+        'tipo_partido',
+        'id_liga',
+        'id_instalacion',
+        'jugadores',
+        'jugadores_locales',
+        'ganador',
+        'resultado_general',
+    ];
+
+    protected $casts = [
+        'jugadores' => 'array',
+        'jugadores_locales' => 'array',
+        'fecha' => 'datetime',
+    ];
 
     /**
-     * Usuario que creó el partido.
+     * Creador del partido (usuario del sistema).
      */
-    public function jugador()
+    public function usuario()
     {
         return $this->belongsTo(User::class, 'usuario_id');
     }
 
     /**
-     * Jugadores participantes del partido (muchos a muchos).
+     * Detalles individuales del partido.
      */
-    public function jugadores()
+    public function detalles()
     {
-        return $this->belongsToMany(User::class, 'partido_user', 'partido_id', 'user_id')->withTimestamps();
+        return $this->hasMany(PartidoDetalle::class, 'partido_id')->with('usuarioLocal');
     }
 
     /**
@@ -65,7 +63,7 @@ protected $casts = [
     }
 
     /**
-     * Instalación donde se juega el partido.
+     * Instalación relacionada al partido.
      */
     public function instalacion()
     {
@@ -73,11 +71,49 @@ protected $casts = [
     }
 
     /**
-     * Detalles individuales del partido.
-     * Incluye la relación con el usuario local (jugador local).
+     * (OPCIONAL) Si en un futuro quieres usar la tabla pivot `partido_user`
      */
-    public function detalles()
+    public function participantes()
     {
-        return $this->hasMany(PartidoDetalle::class, 'partido_id')->with('usuario_local');
+        return $this->belongsToMany(User::class, 'partido_user', 'partido_id', 'user_id')->withTimestamps();
+    }
+    public function getGanadorAttribute()
+    {
+        if (empty($this->resultado)) {
+            return 'Pendiente';
+        }
+
+        $partes = explode('-', $this->resultado);
+        if (count($partes) !== 2) {
+            return 'Resultado inválido';
+        }
+
+        $localScore = (int) trim($partes[0]);
+        $visitanteScore = (int) trim($partes[1]);
+
+        $localNombre = $this->equipo_local ?? 'Local';
+        $visitanteNombre = $this->equipo_visitante ?? 'Visitante';
+
+        if ($localScore > $visitanteScore) {
+            return $localNombre;
+        } elseif ($visitanteScore > $localScore) {
+            return $visitanteNombre;
+        } else {
+            return 'Empate';
+        }
+    }
+
+ public function jugadores()
+{
+    return $this->belongsToMany(
+        User::class,
+        'partido_user',   // nombre de la tabla pivote
+        'partido_id',     // clave foránea de este modelo en la tabla pivote
+        'usuario_id'      // clave foránea del otro modelo en la tabla pivote
+    )->withTimestamps();
+}
+    public function arbitro()
+    {
+        return $this->belongsTo(User::class, 'arbitro_id');
     }
 }
