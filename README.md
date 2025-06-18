@@ -16,7 +16,7 @@ Esta plataforma está diseñada para gestionar y compartir toda la información 
 
 1. Clona el repositorio:
     ```bash
-    git clone https://github.com/marioFernandez115/webTenisMesa.git
+    git clone https://github.com/marioFernandez115/webTenisMesaFinal.git
     ```
 2. Instala dependencias:
     ```bash
