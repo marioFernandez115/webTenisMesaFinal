@@ -13,21 +13,18 @@
     
 </div>
 
-    <div class="text-center mb-5 fade-in" style="transition-delay: 0.3s;">
-        <video 
-            width="1200" 
-            height="500" 
-            autoplay 
-            loop 
-            muted 
-            playsinline 
-            class="rounded shadow video-hover" 
-            style="object-fit: contain; pointer-events: none; background-color: #000;">
-            
-            <source src="{{ asset('img/videoInicio.mp4') }}" type="video/mp4">
-            Tu navegador no soporta la reproducción de videos.
-        </video>
-    </div>
+   <div class="video-responsive text-center mb-5">
+    <video 
+        autoplay 
+        loop 
+        muted 
+        playsinline 
+        class="rounded shadow"
+        style="object-fit: contain; pointer-events: none; background-color: #000; width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
+        <source src="{{ asset('img/videoInicio.mp4') }}" type="video/mp4">
+        Tu navegador no soporta la reproducción de videos.
+    </video>
+</div>
 
     <div class="text-center mb-5 fade-in" style="transition-delay: 0.6s;">
         <h3 class="text-secondary">¿Te apasiona el tenis de mesa?</h3>

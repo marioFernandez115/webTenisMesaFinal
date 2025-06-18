@@ -4,16 +4,20 @@
 <div class="container py-4 animate__animated animate__fadeIn">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Noticias</h2>
+        @auth
+    @if(auth()->user()->rol === 'mantenimiento' || auth()->user()->rol === 'admin_events')
         <a href="{{ route('admin.noticia.create') }}" class="btn btn-success btn-lg animate__animated animate__pulse animate__infinite">
             Crear Noticia
         </a>
+    @endif
+@endauth
     </div>
 
     @foreach($noticias as $noticia)
         <div class="card mb-4 shadow-sm animate__animated animate__fadeInUp" id="noticia-card-{{ $noticia->id }}">
-            @if($noticia->imagen)
-                <img src="{{ asset('storage/' . $noticia->imagen) }}" class="card-img-top" style="max-height:200px; object-fit:cover;">
-            @endif
+    @if($noticia->imagen)
+        <img src="{{ asset('img/ImagenNoticiasEventos/' . $noticia->imagen) }}" class="card-img-top" style="max-height:200px; object-fit:cover;">
+    @endif
 
             <div class="card-body">
                 <h4 class="card-title">{{ $noticia->titulo }}</h4>

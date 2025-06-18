@@ -11,14 +11,18 @@
             <p><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($evento->fecha)->format('d/m/Y') }}</p>
 
             @if($evento->imagen)
-                <img src="{{ asset('storage/' . $evento->imagen) }}" alt="Imagen del evento" class="img-fluid rounded mb-3" style="max-width: 400px;">
-            @endif
+    <img src="{{ asset('img/ImagenNoticiasEventos/' . $evento->imagen) }}" class="card-img-top" style="max-height:200px; object-fit:cover;">
+@endif
 
             <p class="mt-3">{{ $evento->descripcion }}</p>
 
             <div class="d-flex gap-2 mt-4">
                 <a href="{{ route('admin.eventos') }}" class="btn btn-secondary">Volver</a>
-                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editEventoModal">Editar</button>
+@auth
+    @if(auth()->user()->rol === 'mantenimiento' || auth()->user()->rol === 'admin_events')
+        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editEventoModal">Editar</button>
+    @endif
+@endauth
             </div>
 
         </div>

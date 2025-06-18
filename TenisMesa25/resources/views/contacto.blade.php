@@ -32,11 +32,11 @@
             <div class="card-style">
                 <h3 class="h4 text-secondary mb-3">Horario de Entrenamientos</h3>
                 <ul class="list-unstyled">
-                    <li><strong>Lunes:</strong> 19:00 - 21:30</li>
-                    <li><strong>Martes:</strong> Cerrado</li>
-                    <li><strong>Miércoles:</strong> 19:00 - 21:30</li>
-                    <li><strong>Jueves:</strong> Cerrado</li>
-                    <li><strong>Viernes:</strong> 19:00 - 21:30</li>
+                    <li><strong>Lunes:</strong> 11:30H </li>
+                    <li><strong>Martes:</strong> 12:30H</li>
+                    <li><strong>Miércoles:</strong> 11:30H</li>
+                    <li><strong>Jueves:</strong> 12:30H</li>
+                    <li><strong>Viernes:</strong> Cerrado</li>
                     <li><strong>Sábado:</strong> Cerrado</li>
                     <li><strong>Domingo:</strong> Cerrado</li>
                 </ul>

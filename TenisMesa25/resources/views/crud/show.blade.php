@@ -50,7 +50,7 @@
         </div>
     </div>
 </div>
-   <div class="card shadow-sm">
+  <div class="card shadow-sm">
     <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Historial de Partidos</h5>
         <span class="badge bg-light text-dark">Total: {{ $partidos->count() }} partidos</span>
@@ -69,18 +69,18 @@
                             <th>División</th>
                             <th>Equipo</th>
                             <th>Resultado</th>
-                            <th>Liga</th>
+                    
                         </tr>
                     </thead>
                     <tbody class="text-center">
                         @foreach($partidos as $partido)
                             <tr>
-                                <td>{{ $partido->nombre }}</td>
+                                <td>{{ $partido->nombrePartido}}</td>
                                 <td>{{ \Carbon\Carbon::parse($partido->fecha)->format('d/m/Y') }}</td>
                                 <td>{{ $partido->jornada ?? '-' }}</td>
                                 <td>{{ $partido->division ?? '-' }}</td>
                                 <td>
-                                    @switch($partido->equipo)
+                                    @switch($partido->equipo_local)
                                         @case("Rivas (Parque Sureste)")
                                             Rivas (Parque Sureste)
                                             @break
@@ -92,7 +92,7 @@
                                     @endswitch
                                 </td>
                                 <td>{{ $partido->resultado ?? '-' }}</td>
-                                <td>{{ $partido->liga->nombre ?? 'No asignada' }}</td>
+                            
                             </tr>
                         @endforeach
                     </tbody>

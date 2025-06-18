@@ -10,15 +10,22 @@
 
             <p class="text-muted"><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($noticia->fecha)->format('d/m/Y') }}</p>
 
-            @if($noticia->imagen)
-                <img src="{{ asset('storage/' . $noticia->imagen) }}" alt="Imagen de la noticia" class="img-fluid rounded mb-3" style="max-width: 400px;">
-            @endif
+          
+    @if($noticia->imagen)
+        <img src="{{ asset('img/ImagenNoticiasEventos/' . $noticia->imagen) }}" class="card-img-top" style="max-height:200px; object-fit:cover;">
+    @endif
 
             <p class="mt-3">{{ $noticia->descripcion }}</p>
 
             <div class="d-flex gap-2 mt-4">
                 <a href="{{ route('admin.noticias') }}" class="btn btn-secondary animate__animated animate__fadeInLeft">Volver</a>
-                <button class="btn btn-warning animate__animated animate__fadeInRight" data-bs-toggle="modal" data-bs-target="#editNoticiaModal">Editar</button>
+@auth
+    @if(auth()->user()->rol === 'mantenimiento' || auth()->user()->rol === 'admin_events')
+        <button class="btn btn-warning animate__animated animate__fadeInRight" data-bs-toggle="modal" data-bs-target="#editNoticiaModal">
+            Editar
+        </button>
+    @endif
+@endauth
             </div>
 
         </div>

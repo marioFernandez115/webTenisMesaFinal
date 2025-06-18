@@ -2,16 +2,22 @@
 
 @section('content')
 <div class="container py-4 animate__animated animate__fadeIn">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Eventos</h2>
-        <a href="{{ route('admin.evento.create') }}" class="btn btn-success btn-lg animate__animated animate__pulse animate__infinite">Crear Evento</a>
-    </div>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Eventos</h2>
+    @auth
+        @if(auth()->user()->rol === 'mantenimiento' || auth()->user()->rol === 'admin_events')
+            <a href="{{ route('admin.evento.create') }}" class="btn btn-success btn-lg animate__animated animate__pulse animate__infinite">
+                Crear Evento
+            </a>
+        @endif
+    @endauth
+</div>
 
     @foreach($eventos as $evento)
         <div class="card mb-4 shadow-sm animate__animated animate__fadeInUp">
-            @if($evento->imagen)
-                <img src="{{ asset('storage/' . $evento->imagen) }}" class="card-img-top" style="max-height:200px; object-fit:cover;">
-            @endif
+           @if($evento->imagen)
+    <img src="{{ asset('img/ImagenNoticiasEventos/' . $evento->imagen) }}" class="card-img-top" style="max-height:200px; object-fit:cover;">
+@endif
 
             <div class="card-body">
                 <h4 class="card-title">{{ $evento->titulo }}</h4>

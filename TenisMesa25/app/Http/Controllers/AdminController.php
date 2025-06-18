@@ -54,11 +54,11 @@ public function store(Request $request)
     ]);
 
     $request->validate([
-        'nombreyapellidos' => 'required|string|max:255',
-        'telefono' => 'nullable|string|max:15',
+        'nombreyapellidos' => ['required', 'string', 'max:255', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/'],
+        'telefono' => ['required', 'regex:/^[6789]\d{8}$/'],
         'email' => 'required|email|unique:users,email',
         'password' => 'required|string|min:8|confirmed',
-        'rol' => 'required|in:usuario,mantenimiento,admin_noticias,capitan',
+        'rol' => 'required|in:usuario,mantenimiento,admin_events,capitan',
         'equipo' => 'required|in:Rivas (Parque Sureste),Rivas Promesas (Colegio Cigüeñas)',
         'division' => 'string',
     ]);
@@ -91,11 +91,11 @@ public function update(Request $request, $id)
     ]);
 
     $request->validate([
-        'nombreyapellidos' => 'required|string|max:255',
-        'telefono' => 'nullable|string|max:15',
+        'nombreyapellidos' => ['required', 'string', 'max:255', 'regex:/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/'],
+        'telefono' => ['required', 'regex:/^[6789]\d{8}$/'],
         'email' => 'required|email|unique:users,email,' . $id,
         'password' => 'nullable|string|min:8|confirmed',
-        'rol' => 'required|in:usuario,mantenimiento,admin_noticias,capitan',
+        'rol' => 'required|in:usuario,mantenimiento,admin_events,capitan',
         'equipo' => 'required|in:Rivas (Parque Sureste),Rivas Promesas (Colegio Cigüeñas)',
         'division' => 'string',
     ]);
@@ -129,17 +129,25 @@ public function update(Request $request, $id)
     }
 
     // ✅ Actualizado: Mostrar perfil del usuario con historial de partidos
-   public function show($id)
+public function show($id)
 {
     $usuario = User::findOrFail($id);
 
-    // Obtener solo los partidos donde ha participado este usuario
-    $partidos = Partido::whereHas('jugadores', function ($query) use ($usuario) {
+    // Partidos donde el usuario está en jugadores (relación many-to-many)
+    $partidosJugadores = Partido::whereHas('jugadores', function ($query) use ($usuario) {
         $query->where('usuario_id', $usuario->id);
-    })
-    ->with('jugadores', 'liga')
-    ->orderByDesc('fecha')
-    ->get();
+    });
+
+    // Partidos donde el usuario está en el acta (partido_detalles)
+    $partidosActa = Partido::whereHas('detalles', function ($query) use ($usuario) {
+        $query->where('usuario_local_id', $usuario->id);
+    });
+
+    // Unir ambos resultados y eliminar duplicados
+    $partidos = $partidosJugadores
+        ->union($partidosActa)
+        ->orderByDesc('fecha')
+        ->get();
 
     return view('crud.show', compact('usuario', 'partidos'));
 }
@@ -184,6 +192,16 @@ public function noticiasIndex()
     $noticias = Noticia::orderBy('fecha', 'desc')->paginate(10);
     return view('events.noticias', compact('noticias'));
 }
+public function noticiaShow($id)
+{
+    $noticia = \App\Models\Noticia::findOrFail($id);
+    return view('events.noticia_show', compact('noticia'));
+}
+public function noticiaEdit($id)
+{
+    $noticia = \App\Models\Noticia::findOrFail($id);
+    return view('events.noticia_edit', compact('noticia'));
+}
 public function noticiaStore(Request $request)
 {
     $request->validate([
@@ -196,7 +214,10 @@ public function noticiaStore(Request $request)
     $data = $request->only(['titulo', 'descripcion', 'fecha']);
 
     if ($request->hasFile('imagen')) {
-        $data['imagen'] = $request->file('imagen')->store('noticias', 'public');
+        $file = $request->file('imagen');
+        $nombre = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('img/ImagenNoticiasEventos'), $nombre);
+        $data['imagen'] = $nombre;
     }
 
     Noticia::create($data);
@@ -207,12 +228,13 @@ public function noticiaDestroy($id)
 {
     $noticia = Noticia::findOrFail($id);
     // Elimina la imagen del almacenamiento si existe
-    if ($noticia->imagen) {
-        \Storage::disk('public')->delete($noticia->imagen);
+    if ($noticia->imagen && file_exists(public_path('img/ImagenNoticiasEventos/' . $noticia->imagen))) {
+        unlink(public_path('img/ImagenNoticiasEventos/' . $noticia->imagen));
     }
     $noticia->delete();
     return redirect()->route('admin.noticias')->with('success', 'Noticia eliminada correctamente.');
 }
+
 public function noticiaCreate()
 {
     return view('events.noticia_create');
@@ -242,32 +264,26 @@ public function eventoStore(Request $request)
     $data = $request->only(['titulo', 'descripcion', 'fecha']);
 
     if ($request->hasFile('imagen')) {
-        $data['imagen'] = $request->file('imagen')->store('eventos', 'public');
+        $file = $request->file('imagen');
+        $nombre = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('img/ImagenNoticiasEventos'), $nombre);
+        $data['imagen'] = $nombre;
     }
 
     Evento::create($data);
     return redirect()->route('admin.eventos')->with('success', 'Evento creado correctamente.');
 }
 
+
 public function eventoDestroy($id)
 {
     $evento = Evento::findOrFail($id);
     // Elimina la imagen del almacenamiento si existe
-    if ($evento->imagen) {
-        \Storage::disk('public')->delete($evento->imagen);
+    if ($evento->imagen && file_exists(public_path('img/ImagenNoticiasEventos/' . $evento->imagen))) {
+        unlink(public_path('img/ImagenNoticiasEventos/' . $evento->imagen));
     }
     $evento->delete();
     return redirect()->route('admin.eventos')->with('success', 'Evento eliminado correctamente.');
-}
-public function noticiaShow($id)
-{
-    $noticia = Noticia::findOrFail($id);
-    return view('events.noticia_show', compact('noticia'));
-}
-public function noticiaEdit($id)
-{
-    $noticia = Noticia::findOrFail($id);
-    return view('events.noticia_edit', compact('noticia'));
 }
 public function noticiaUpdate(Request $request, $id)
 {
@@ -283,10 +299,13 @@ public function noticiaUpdate(Request $request, $id)
 
     if ($request->hasFile('imagen')) {
         // Elimina la imagen anterior si existe
-        if ($noticia->imagen) {
-            \Storage::disk('public')->delete($noticia->imagen);
+        if ($noticia->imagen && file_exists(public_path('img/ImagenNoticiasEventos/' . $noticia->imagen))) {
+            unlink(public_path('img/ImagenNoticiasEventos/' . $noticia->imagen));
         }
-        $data['imagen'] = $request->file('imagen')->store('noticias', 'public');
+        $file = $request->file('imagen');
+        $nombre = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('img/ImagenNoticiasEventos'), $nombre);
+        $data['imagen'] = $nombre;
     }
 
     $noticia->update($data);
@@ -319,10 +338,13 @@ public function eventoUpdate(Request $request, $id)
 
     if ($request->hasFile('imagen')) {
         // Elimina la imagen anterior si existe
-        if ($evento->imagen) {
-            \Storage::disk('public')->delete($evento->imagen);
+        if ($evento->imagen && file_exists(public_path('img/ImagenNoticiasEventos/' . $evento->imagen))) {
+            unlink(public_path('img/ImagenNoticiasEventos/' . $evento->imagen));
         }
-        $data['imagen'] = $request->file('imagen')->store('eventos', 'public');
+        $file = $request->file('imagen');
+        $nombre = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('img/ImagenNoticiasEventos'), $nombre);
+        $data['imagen'] = $nombre;
     }
 
     $evento->update($data);

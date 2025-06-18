@@ -61,7 +61,7 @@
     <select name="rol" class="form-select" required>
         <option value="usuario" {{ old('rol', $usuario->rol ?? '') == 'usuario' ? 'selected' : '' }}>Usuario</option>
         <option value="mantenimiento" {{ old('rol', $usuario->rol ?? '') == 'mantenimiento' ? 'selected' : '' }}>Administrador</option>
-        <option value="admin_noticias" {{ old('rol', $usuario->rol ?? '') == 'admin_noticias' ? 'selected' : '' }}>Admin Noticias</option>
+        <option value="admin_events" {{ old('rol', $usuario->rol ?? '') == 'admin_events' ? 'selected' : '' }}>Administrador Eventos y Noticias</option>
         <option value="capitan" {{ old('rol', $usuario->rol ?? '') == 'capitan' ? 'selected' : '' }}>Capitán</option>
     </select>
 </div>

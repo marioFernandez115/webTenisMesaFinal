@@ -18,7 +18,16 @@
                   
                         <div class="mb-3">
     <label for="nombreyapellidos" class="form-label">{{ __('Nombre y Apellidos') }}</label>
-    <input id="nombreyapellidos" type="text" class="form-control @error('nombreyapellidos') is-invalid @enderror" name="nombreyapellidos" value="{{ old('nombreyapellidos') }}" required autocomplete="nombreyapellidos" autofocus>
+    <input id="nombreyapellidos" type="text" 
+    class="form-control @error('nombreyapellidos') is-invalid @enderror" 
+    name="nombreyapellidos" 
+    placeholder="Ej: David Fernandez García"
+    value="{{ old('nombreyapellidos') }}" 
+    required 
+    autocomplete="nombreyapellidos" 
+    autofocus
+    pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
+    title="Solo letras y espacios">
     @error('nombreyapellidos')
         <div class="invalid-feedback">
             {{ $message }}
@@ -31,7 +40,7 @@
                         
                         <div class="mb-3">
                             <label for="email" class="form-label">{{ __('Correo Electrónico') }}</label>
-                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
+                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" placeholder="Ej: Correo@gmail.com" value="{{ old('email') }}" required autocomplete="email">
                             @error('email')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -41,14 +50,22 @@
 
                     
                         <div class="mb-3">
-                            <label for="telefono" class="form-label">{{ __('Teléfono') }}</label>
-                            <input id="telefono" type="text" class="form-control @error('telefono') is-invalid @enderror" name="telefono" value="{{ old('telefono') }}" required autocomplete="telefono">
-                            @error('telefono')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
+    <label for="telefono" class="form-label">{{ __('Teléfono') }}</label>
+    <input id="telefono" type="text"
+        class="form-control @error('telefono') is-invalid @enderror"
+        name="telefono"
+        value="{{ old('telefono') }}"
+        required
+        autocomplete="telefono"
+        placeholder="Ej: 641234567"
+        pattern="^[6789]\d{8}$"
+        title="Introduce un teléfono español válido de 9 dígitos">
+    @error('telefono')
+        <div class="invalid-feedback">
+            {{ $message }}
+        </div>
+    @enderror
+</div>
 
              
                         <div class="mb-3">

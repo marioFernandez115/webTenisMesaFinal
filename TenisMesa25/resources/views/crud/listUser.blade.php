@@ -24,7 +24,7 @@
                         <option value="">-- Rol --</option>
                         <option value="usuario" {{ request('rol') == 'usuario' ? 'selected' : '' }}>Usuario</option>
                         <option value="mantenimiento" {{ request('rol') == 'mantenimiento' ? 'selected' : '' }}>Administrador</option>
-                        <option value="admin_noticias" {{ request('rol') == 'admin_noticias' ? 'selected' : '' }}>Admin Noticias</option>
+                        <option value="admin_events" {{ request('rol') == 'admin_events' ? 'selected' : '' }}>Administrador Eventos y Noticias</option>
                         <option value="capitan" {{ request('rol') == 'capitan' ? 'selected' : '' }}>Capitán</option>
                     </select>
                 </div>
