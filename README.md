@@ -14,9 +14,7 @@ Esta plataforma está diseñada para gestionar y compartir toda la información 
 [![Instagram](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/rivastenisdemesa)
 
 [![X (Twitter)](https://img.shields.io/badge/X-000000?style=for-the-badge&logo=twitter&logoColor=white)](https://x.com/cdtmrivas?lang=es)
-=======
-[![X (Twitter)](https://img.shields.io/badge/X-000000?style=for-the-badge&logo=twitter&logoColor=white)](https://x.com/cdtmrivas?lang=es)
->>>>>>> cfd3938a89d794a24f1c2c139a740a598588b85e
+
 
 ---
 
